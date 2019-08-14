@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<ui:define name="content">
+
+		<p:spacer height="10" />
+
+		<h:form>
+			<p:breadCrumb>
+				<p:menuitem value="Home" url="#" />
+				<p:menuitem value="Médicos" url="#" />
+			</p:breadCrumb>
+		</h:form>
+
+		<p:spacer height="10" />
+		<div class="ui-g">
+			<h:form>					
+				<h:messages id="messages" showDetail="true" closable="true"  globalOnly="true" />
+			</h:form>
+			<h:form>
+				<div class="ui-g-12">					
+					<p:panel id="cadastroMedicos" header="Cadastro de Médicos" style="margin-bottom:20px">
+						<h:inputHidden value="#{medicoController.medico.id}" /> 			
+						<h:panelGrid columns="4" cellpadding="5">			
+							<div class="ui-g-12">
+								<span class="ui-float-label"> 		
+									<p:outputLabel for="nome" value="Nome do Médico: " />						
+									<p:inputText id="nome" value="#{medicoController.medico.nome}"  required="true" />
+									<h:message for="nome" />
+								</span>
+							</div>
+							<div class="ui-g-6">
+								<span class="ui-float-label"> 
+									<p:outputLabel for="email" value="Email do Médico: " />	
+									<p:inputText id="email" value="#{medicoController.medico.email}" required="true"/>
+									<h:message for="email" />
+								</span>	
+							</div>		
+							<div class="ui-g-6">
+								<span class="ui-float-label">
+									<p:outputLabel for="crm" value="Crm do Médico: " />	 					
+									<p:inputMask id="crm" value="#{medicoController.medico.crm}" required="true" mask="9999999999/a*" />									
+									<h:message for="crm" />
+								</span>								
+							</div>
+							<div class="ui-g-6">
+								<span class="ui-float-label"> 
+									<p:outputLabel for="telefone" value="Telefone do Médico: " />	
+									<p:inputMask id="telefone" value="#{medicoController.medico.telefone}" required="true" mask="(99)-99999-9999"/> 
+									<h:message for="telefone" />
+								</span>	
+							</div>
+						</h:panelGrid>						
+					</p:panel>	
+				</div>							
+				<p:commandButton action="#{medicoController.addMedico()}" value="Salvar" update="cadastroMedicos"/>			
+			</h:form>
+		</div>
+	</ui:define>
+
+</ui:composition>
