@@ -28,7 +28,7 @@ public class MedicoService {
 		return this.dao.listaMedicos();
 	}
 	
-	public void salvarMedico(Medico medico) {		
+	public void salvarMedico(Medico medico) {	
 		this.dao.salvarMedico(medico);	
 	}
 	

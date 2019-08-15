@@ -5,6 +5,7 @@ package br.com.consultemed.models;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -57,6 +59,11 @@ public class Medico implements Serializable{
 	@Setter
 	@Column(name = "TELEFONE")
 	private String telefone;
+	
+	@Getter
+	@Setter	
+	@OneToOne(cascade = CascadeType.ALL)
+	private DiasAtendimento diasAtendimento;
 
 	@Override
 	public String toString() {
