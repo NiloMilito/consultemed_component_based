@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -30,6 +28,7 @@ public class PacienteController {
 	@Inject
 	private PacienteService service;
 	
+	private BeanFlash flash = new BeanFlash();
 	
 	public String editar() {
 		this.paciente = this.pacienteEditar;
@@ -39,8 +38,7 @@ public class PacienteController {
 	public String excluir() throws Exception {
 		this.paciente = this.pacienteEditar;
 		this.service.remover(this.paciente.getId());
-		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
-		return "/pages/pacientes/pacientes.xhtml?faces-redirect=true";
+		return this.flash.redirectionAviso("Removido com Sucesso!", "/pages/pacientes/pacientes.xhtml?faces-redirect=true");				
 	}
 	
 	public String novoPaciente() {
@@ -49,8 +47,13 @@ public class PacienteController {
 	}
 	
 	public String addPaciente() throws Exception {
-		this.service.salvar(this.paciente);
-		return "/pages/pacientes/pacientes.xhtml?faces-redirect=true";
+		Paciente antigo = this.service.buscarPacientePorCpf(this.paciente.getCpf());
+		if(antigo == null) {			
+			this.service.salvar(this.paciente);
+			return this.flash.redirectionAviso("Cadastrado com Sucesso!", "/pages/pacientes/pacientes.xhtml?faces-redirect=true");
+		} else {
+			return this.flash.redirectionAlerta("CPF já cadastrado!", "/pages/pacientes/addPacientes.xhtml?faces-redirect=true");
+		}
 	}
 	
 	public Collection<Paciente> listaPacientes() throws Exception{

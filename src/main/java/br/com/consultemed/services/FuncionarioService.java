@@ -37,4 +37,9 @@ public class FuncionarioService implements IFuncionarioService{
 		return this.dao.listAll();
 	}
 
+	@Override
+	public Funcionario buscarFuncionarioPorEmail(String email) {
+		return this.dao.buscarPorEmail(email);
+	}
+
 }

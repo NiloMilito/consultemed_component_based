@@ -53,4 +53,8 @@ public class PacienteService implements IPacienteService{
 		return this.pacienteDao.listAll();
 	}
 
+	public Paciente buscarPacientePorCpf(String cpf) {
+		return this.pacienteDao.buscarPorCpf(cpf);
+	}
+
 }

@@ -11,15 +11,15 @@
 
 		<h:form>
 			<p:breadCrumb>
-				<p:menuitem value="Home" url="/home.xhtml" />
-				<p:menuitem value="Consultas" url="/pages/consultas/addConsultas.xhtml?faces-redirect=true" />
+				<p:menuitem value="Home" url="/consultemed_component_based/home.xhtml" />
+				<p:menuitem value="Consultas" url="/consultemed_component_based/pages/consultas/consultas.xhtml?faces-redirect=true" />
 			</p:breadCrumb>
 		</h:form>
 
 		<p:spacer height="10" />
 		<div class="ui-g">
 			<h:form>					
-				<h:messages id="messages" showDetail="true" closable="true"  globalOnly="true" />
+				<p:messages id="messages" showDetail="true" closable="true"  globalOnly="true" />
 			</h:form>
 			<h:form>
 				<div class="ui-g-12">					
@@ -30,10 +30,10 @@
 								<span class="ui-float-label"> 
 									<p:outputLabel for="paciente" value="Paciente: " />	
 
-									<h:selectOneMenu id="paciente" value="#{consultaController.paciente}" converter="pacienteConverter">
+									<p:selectOneMenu id="paciente" value="#{consultaController.paciente}" converter="pacienteConverter">
 										<f:selectItem itemLabel="Selecione um paciente" itemValue="" />
 										<f:selectItems value="#{consultaController.pacientes}" />
-									</h:selectOneMenu>
+								</p:selectOneMenu>
 									<h:message for="paciente" />
 								</span>	
 							</div>		
@@ -41,10 +41,10 @@
 								<span class="ui-float-label">
 									<p:outputLabel for="medico" value="Médico: " />	 
 									
-									 <h:selectOneMenu id="medico" value="#{consultaController.smedico}" converter="medicoConverter">
+									 <p:selectOneMenu id="medico" value="#{consultaController.smedico}" converter="medicoConverter">
 										<f:selectItems value="#{consultaController.medicos}" />
 										<f:selectItem itemLabel="Selecione um médico" itemValue="" />
-									</h:selectOneMenu>									 
+									</p:selectOneMenu>									 
 									<h:message for="medico" />
 								</span>								
 							</div>

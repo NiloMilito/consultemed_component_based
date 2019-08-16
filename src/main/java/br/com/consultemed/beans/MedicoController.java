@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,6 +38,8 @@ public class MedicoController{
 	
 	private String[] diasSemana;
 	
+	private BeanFlash flash = new BeanFlash();
+	
 	public String editar() {
 		this.medico = this.medicoEditar;
 		return "/pages/medicos/addMedicos.xhtml";
@@ -48,8 +48,7 @@ public class MedicoController{
 	public String excluir() throws Exception {
 		this.medico = this.medicoEditar;
 		this.service.deletarMedico(this.medico.getId());
-		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
-		return "/pages/medicos/medicos.xhtml?faces-redirect=true";
+		return this.flash.redirectionAviso("Removido com Sucesso!", "/pages/medicos/medicos.xhtml?faces-redirect=true");
 	}
 	
 	public String novoMedico() {
@@ -63,14 +62,9 @@ public class MedicoController{
 		if(antigo == null) {
 			this.medico.setDiasAtendimento(this.preencheDiasSemana());
 			this.service.salvarMedico(this.medico);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, 
-					"Info", "Cadastrado com Sucesso!."));			
-			
-			return "/pages/medicos/medicos.xhtml?faces-redirect=true";
+			return this.flash.redirectionAviso("Cadastrado com Sucesso!", "/pages/medicos/medicos.xhtml?faces-redirect=true");
 		} else {
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, 
-					"Aviso!", "CRM já cadastrado!"));	    					
-			return "/pages/medicos/addMedicos.xhtml?faces-redirect=true";
+			return this.flash.redirectionAlerta("CRM já cadastrado!", "/pages/medicos/addMedicos.xhtml?faces-redirect=true");
 		}			
 	}
 	

@@ -82,7 +82,7 @@ public class ConsultaController {
 	public String excluir() throws Exception {
 		this.consulta = this.consultaEditar;
 		this.service.remover(this.consulta.getId());		
-		return this.flash.redirectionConsulta("Cadastrado com Sucesso!", "/pages/consultas/consultas.xhtml?faces-redirect=true");		
+		return this.flash.redirectionAviso("Cadastrado com Sucesso!", "/pages/consultas/consultas.xhtml?faces-redirect=true");		
 	}
 	
 	public String novaConsulta() {
@@ -95,9 +95,9 @@ public class ConsultaController {
 		this.consulta.setPaciente(this.paciente);
 		if(this.service.podeFazerAgendamento(this.consulta)) {
 			this.service.salvar(this.consulta);							
-			return this.flash.redirectionConsulta("Cadastrado com Sucesso!", "/pages/consultas/consultas.xhtml?faces-redirect=true");	
+			return this.flash.redirectionAviso("Cadastrado com Sucesso!", "/pages/consultas/consultas.xhtml?faces-redirect=true");	
 		} else {	
-			return this.flash.redirectionConsulta("Já existe uma Consulta para essa data", "/pages/consultas/addConsultas.xhtml?faces-redirect=true");			
+			return this.flash.redirectionAlerta("Já existe uma Consulta para essa data", "/pages/consultas/addConsultas.xhtml?faces-redirect=true");			
 		}			
 	}
 	

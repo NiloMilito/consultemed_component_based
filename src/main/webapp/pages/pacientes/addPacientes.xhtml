@@ -11,15 +11,18 @@
 
 		<h:form>
 			<p:breadCrumb>
-				<p:menuitem value="Home" url="#" />
-				<p:menuitem value="Pacientes" url="#" />
+				<p:menuitem value="Home" url="/consultemed_component_based/home.xhtml" />
+				<p:menuitem value="Pacientes" url="/consultemed_component_based/pages/pacientes/pacientes.xhtml?faces-redirect=true" />
 			</p:breadCrumb>
 		</h:form>
 
 		<p:spacer height="10" />
+		<h:form>					
+			<p:messages showDetail="false" showSummary="true" globalOnly="true" />
+		</h:form>
 
 		<h:form>
-		 <p:panel id="cadastroPacientes" header="Cadastro de Médicos" style="margin-bottom:20px">
+		 <p:panel id="cadastroPacientes" header="Cadastro de Pacientes" style="margin-bottom:20px">
 		 
 			<h:panelGrid columns="2">
 			
@@ -29,7 +32,7 @@
 				
 				<h3>Nome do Paciente</h3>
 				<span class="ui-float-label"> 
-					<h:inputText id="nome" value="#{pacienteController.paciente.nome}" required="true"/> 
+					<p:inputText id="nome" value="#{pacienteController.paciente.nome}" required="true"/> 
 				</span>
 				
 				<h3>CPF do Paciente</h3>
@@ -39,22 +42,22 @@
 										
 				<h3>Rua do Paciente</h3>
 				<span class="ui-float-label"> 
-					<h:inputText id="rua" value="#{pacienteController.paciente.endereco.rua}" required="true"/>
+					<p:inputText id="rua" value="#{pacienteController.paciente.endereco.rua}" required="true"/>
 				</span>
 				
 				<h3>Bairro do Paciente</h3>
 				<span class="ui-float-label"> 
-					<h:inputText id="bairro" value="#{pacienteController.paciente.endereco.bairro}" required="true"/> 
+					<p:inputText id="bairro" value="#{pacienteController.paciente.endereco.bairro}" required="true"/> 
 				</span>
 				
 				<h3>Cidade do Paciente</h3>
 				<span class="ui-float-label"> 
-					<h:inputText id="cidade" value="#{pacienteController.paciente.endereco.cidade}" required="true"/>
+					<p:inputText id="cidade" value="#{pacienteController.paciente.endereco.cidade}" required="true"/>
 				</span>
 				
 				<h3>UF do Paciente</h3>
 				<span class="ui-float-label"> 
-					<h:inputText id="uf" value="#{pacienteController.paciente.endereco.estado}" required="true"/> 
+					<p:inputText id="uf" value="#{pacienteController.paciente.endereco.estado}" required="true"/> 
 				</span>
 			
 			</h:panelGrid>

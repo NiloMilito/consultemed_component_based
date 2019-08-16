@@ -3,10 +3,8 @@ package br.com.consultemed.beans;
 import java.util.Collection;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
 // import javax.faces.bean.RequestScoped;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,6 +29,7 @@ public class FuncionarioController {
 	@Inject
 	private IFuncionarioService service;
 	
+	private BeanFlash flash = new BeanFlash();
 	
 	public String editar() {
 		this.funcionario = this.funcionarioEditar;
@@ -40,8 +39,7 @@ public class FuncionarioController {
 	public String excluir() throws Exception {
 		this.funcionario = this.funcionarioEditar;
 		this.service.remover(this.funcionario.getId());
-		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
-		return "/pages/funcionarios/funcionarios.xhtml?faces-redirect=true";
+		return this.flash.redirectionAviso("Removido com Sucesso!", "/pages/funcionarios/funcionarios.xhtml?faces-redirect=true");		
 	}
 	
 	public String novoFuncionario() {
@@ -50,8 +48,14 @@ public class FuncionarioController {
 	}
 	
 	public String addFuncionario() throws Exception {
-		this.service.salvar(this.funcionario);
-		return "/pages/funcionarios/funcionarios.xhtml?faces-redirect=true";
+		Funcionario antigo = this.service.buscarFuncionarioPorEmail(this.funcionario.getEmail());			
+		
+		if(antigo == null) {
+			this.service.salvar(this.funcionario);
+			return this.flash.redirectionAviso("Cadastrado com Sucesso!", "/pages/funcionarios/funcionarios.xhtml?faces-redirect=true");
+		} else {
+			return this.flash.redirectionAlerta("Email já cadastrado!", "/pages/funcionarios/addFuncionarios.xhtml?faces-redirect=true");
+		}
 	}
 	
 	public Collection<Funcionario> listaFuncionarios() throws Exception{

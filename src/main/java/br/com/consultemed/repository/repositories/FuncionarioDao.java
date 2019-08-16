@@ -23,8 +23,7 @@ public class FuncionarioDao implements IFuncionarioDao{
 		this.manager.getTransaction().begin();
 		this.manager.persist(funcionario);
 		this.manager.getTransaction().commit();
-		this.manager.close();
-		
+		this.manager.close();		
 	}
 
 	@Override
@@ -73,10 +72,17 @@ public class FuncionarioDao implements IFuncionarioDao{
 	}
 
 	@Override
-	public Funcionario buscarPorEmail(String email) {		
-		Query query = this.manager.createQuery("SELECT f FROM Fiuncionario f WHERE f.email LIKE :email");
-		query.setParameter("email", email);		
-		return (Funcionario) query.getSingleResult();
+	public Funcionario buscarPorEmail(String email) {
+		Funcionario funcionario = null;
+		try {
+			this.manager = factory.createEntityManager();
+			Query query = this.manager.createQuery("SELECT f FROM Funcionario f.email LIKE :email ");
+			query.setParameter("email", email);		
+			funcionario = (Funcionario) query.getSingleResult();
+		} catch (Exception ex) {
+			
+		}
+		return funcionario;
 	}
 
 }
