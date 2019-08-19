@@ -3,10 +3,18 @@
  */
 package br.com.consultemed.beans;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+
+import org.primefaces.PrimeFaces;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author carlosbarbosagomesfilho
@@ -15,6 +23,8 @@ import javax.faces.context.FacesContext;
 
 @ViewScoped
 @ManagedBean
+@Getter
+@Setter
 public class BeanFlash {
 
 	public String redirection() {		
@@ -40,4 +50,16 @@ public class BeanFlash {
 		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 		return url;
 	}
+	
+	public void exibirPaciente() {							          
+		Map<String,Object> options = new HashMap<String, Object>();
+	    options.put("resizable", false);
+	    options.put("draggable", false);
+	    options.put("modal", true);
+	    PrimeFaces.current().dialog().openDynamic("pacienteDialog", options, null);
+	    
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+	}
+	
+		
 }

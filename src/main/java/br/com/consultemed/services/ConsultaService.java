@@ -1,16 +1,24 @@
 package br.com.consultemed.services;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import br.com.consultemed.models.Consulta;
+import br.com.consultemed.models.Paciente;
+import br.com.consultemed.repository.repositories.ConsultaDao;
 import br.com.consultemed.repository.repositories.IConsultaDao;
 
-public class ConsultaService implements IConsultaService{
+public class ConsultaService implements IConsultaService{	
 	
 	@Inject
 	private IConsultaDao repository;
+	
+	public ConsultaService() {
+		this.repository = new ConsultaDao();
+	}
 
 	@Override
 	public void salvar(Consulta object) throws Exception {
@@ -35,11 +43,36 @@ public class ConsultaService implements IConsultaService{
 	@Override
 	public Collection<Consulta> listar() throws Exception {
 		return this.repository.listAll();
+	}	
+
+	@Override
+	public boolean podeFazerAgendamento(Date data, Long id) {
+		return this.repository.podeFazerAgendamento(data, id);
 	}
 
 	@Override
-	public boolean podeFazerAgendamento(Consulta consulta) {
-		return this.repository.podeFazerAgendamento(consulta);
+	public List<Consulta> buscarPorPeriodo(Date inicio, Date fim) {		
+		return this.repository.buscarPorPeriodo(inicio, fim);
+	}
+
+	@Override
+	public void cancelarConsulta(Consulta consulta) {
+		this.repository.cancelarConsulta(consulta);
+	}
+
+	@Override
+	public List<Consulta> buscaConsultasNoMes(int mes) {	
+		return this.repository.buscaConsultasNoMes(mes);
+	}
+
+	@Override
+	public List<Consulta> buscaConsultasPorPaciente(Long id) {		
+		return this.repository.buscaConsultasPorPaciente(id);
+	}
+
+	@Override
+	public Paciente maisCancelouConsulta() {		
+		return this.repository.maisCancelouConsulta();
 	}
 
 }

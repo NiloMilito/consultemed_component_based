@@ -12,17 +12,80 @@
 				<p:menuitem value="Home" url="/consultemed_component_based/home.xhtml" />
 				<p:menuitem value="Consultas" url="/consultemed_component_based/pages/consultas/consultas.xhtml?faces-redirect=true" />
 			</p:breadCrumb>
+			<div class="ui-g-12">		
+				<p:panelGrid columns="5" style="margin-bottom:10px" cellpadding="5">
+					<p:commandButton id="btnp" value="Buscar Por Periodo" action="#{consultaController.preparaConsulta(1)}"
+					 ajax="false" update="pesquisaConsultas" icon="pi pi-refresh" />
+					<p:commandButton id="btna" value="Verifica se possui agendamento" action="#{consultaController.preparaConsulta(2)}"
+					 process="@this" update="pesquisaConsultas" icon="pi pi-refresh" />
+					<p:commandButton id="btnc" value="Consultas em um Mês" action="#{consultaController.preparaConsulta(3)}"
+					 process="@this" update="pesquisaConsultas" icon="pi pi-refresh" />					
+					<p:commandButton id="btnpa" value="Consultas de um paciente"  action="#{consultaController.preparaConsulta(4)}"
+					 process="@this" update="pesquisaConsultas" icon="pi pi-refresh" />
+					 <p:commandButton id="btnpca" value="Paciente que mais cancelou consultas"  action="#{consultaController.preparaConsulta(5)}"
+					 process="@this" update="pesquisaConsultas" icon="pi pi-refresh" />
+				</p:panelGrid>
+			</div>
+	
+			<div class="ui-g-12">					
+				<p:panel id="pesquisaConsultas" header="Pesquisar Consultas" style="margin-bottom:20px">
+					<p:messages id="messages" showDetail="false" showSummary="true" globalOnly="true" />										
+					<p:panelGrid id="periodo" columns="3" rendered="#{consultaController.isPeriodo}">	
+						<p:outputLabel for="inicio" value="Data Inicio: " />	
+						<p:calendar id="inicio" value="#{consultaController.consultaDto.inicio}" locale="pt_BR" pattern="dd/MM/yyyy"> 
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:calendar>
+						<p:message for="inicio"/>
+
+						<p:outputLabel for="fim" value="Data Fim: " />	
+						<p:calendar id="fim" value="#{consultaController.consultaDto.fim}" locale="pt_BR" pattern="dd/MM/yyyy"> 
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:calendar>
+						<p:message for="fim"/>
+					</p:panelGrid>
+
+					<p:panelGrid id="agendamento" columns="3" rendered="#{consultaController.isAgendamento}">	
+						<p:outputLabel for="medico" value="Médico: " />	 								
+						<p:selectOneMenu id="medico" value="#{consultaController.consultaDto.medico}" converter="medicoConverter">
+						   <f:selectItems value="#{consultaController.medicos}" />
+						   <f:selectItem itemLabel="Selecione um médico" itemValue="" />
+					   </p:selectOneMenu>									 
+					   <p:message for="medico" />
+
+						<p:outputLabel for="data" value="Data: " />	
+						<p:calendar id="data" value="#{consultaController.consultaDto.data}" locale="pt_BR" pattern="dd/MM/yyyy"> 
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:calendar>
+						<p:message for="data"/>
+					</p:panelGrid>
+
+					<p:panelGrid id="mesdata" columns="3" rendered="#{consultaController.isMes}">	
+						<p:outputLabel for="mes" value="Mês: " />	
+						<p:calendar id="mes" value="#{consultaController.consultaDto.mes}" locale="pt_BR" pattern="MM/yyyy"> 
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:calendar>
+						<p:message for="mes"/>
+					</p:panelGrid>
+
+					<p:panelGrid id="pacient" columns="3" rendered="#{consultaController.isPacient}">	
+					   <p:outputLabel for="paciente" value="Paciente: " />	
+						<p:selectOneMenu id="paciente" value="#{consultaController.consultaDto.paciente}" converter="pacienteConverter">
+							<f:selectItem itemLabel="Selecione um paciente" itemValue="" />
+							<f:selectItems value="#{consultaController.pacientes}" />
+						</p:selectOneMenu>
+						<p:message for="paciente" />											
+					</p:panelGrid>
+					<br />
+					<p:commandButton value="Pesquisar" update="frm" action="#{consultaController.consultarConsultas()}" styleClass="ui-priority-primary" />								
+					
+				</p:panel>
+			</div>
 		</h:form>
 	
 		<p:spacer height="10" />
 					
-		<h:form id="frm">
-			<p:messages showDetail="false" showSummary="true" globalOnly="true" />
-			<p:dataTable id="table-consultas" var="consulta"
-				value="#{consultaController.listaConsultas()}">
-				<!-- <p:column headerText="Motivo">
-					<h:outputText value="#{consulta.motivo}" />
-				</p:column> -->
+		<h:form id="frm">			
+			<p:dataTable id="table-consultas" var="consulta" value="#{consultaController.consultas}">
 
 				<p:column headerText="Paciente">
 					<h:outputText value="#{consulta.paciente.nome}" />
@@ -34,11 +97,15 @@
 
 				<p:column headerText="Data">
 					<h:outputText value="#{consulta.dataConsulta}">
-							<f:convertDateTime pattern="dd/MM/yyyy" />
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 				</p:column>
 
-				<p:column>
+				<p:column headerText="Situação">
+					<h:outputText value="#{consulta.statusConsulta}" />					
+				</p:column>
+
+				<p:column headerText="Ações" width="250">
 					<p:commandButton action="#{consultaController.editar()}" value="Editar">
 						<f:setPropertyActionListener target="#{consultaController.consultaEditar}" value="#{consulta}" />
 					</p:commandButton>
@@ -49,6 +116,15 @@
 						value="Excluir" update="@form" process="@this">
 						<f:setPropertyActionListener target="#{consultaController.consultaEditar}" value="#{consulta}" />
 					</p:commandButton>
+				
+					<p:commandButton value="Cancelar" action="#{consultaController.cancelarConsulta()}" >
+						<p:confirm header="Aviso!" message="Tem certeza que quer cancelar a Consulta?" icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+						 
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+						<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+					</p:confirmDialog>  
 
 				</p:column>
 
@@ -56,10 +132,19 @@
 
 			<p:spacer height="30" width="10" />
 
-
 			<p:commandButton id="novaConsulta" value="Nova Consulta" 
 				action="#{consultaController.novaConsulta()}" style="margin-right:20px;">
 			</p:commandButton>
+
+		</h:form>
+
+		<h:form>
+			<p:dialog id="pacienteDialog" header="Dialog" modal="true" widgetVar="pacienteDialog" width="700" showEffect="clip"    resizable="false" closeOnEscape="true">
+				<h:form id="fmDialog">
+					<p:outputLabel for="nome" value="Nome: " />	
+					<h:outputText id="nome" value="#{consultaController.paciente.nome}" />
+				</h:form>
+			</p:dialog>
 		</h:form>
 
 	</ui:define>

@@ -1,18 +1,24 @@
 package br.com.consultemed.beans;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.log4j.Logger;
+
+import br.com.consultemed.dto.ConsultaDto;
 import br.com.consultemed.models.Consulta;
 import br.com.consultemed.models.Medico;
 import br.com.consultemed.models.Paciente;
+import br.com.consultemed.services.ConsultaService;
 import br.com.consultemed.services.IConsultaService;
 import br.com.consultemed.services.IPacienteService;
 import br.com.consultemed.services.MedicoService;
@@ -25,42 +31,128 @@ import lombok.Setter;
 @Setter
 @RequestScoped
 public class ConsultaController {
-	@Inject
-	private Consulta consulta;
 	
-	private Consulta consultaEditar;	
-	
-	@Inject
-	private IConsultaService service;	
-	
-	@Inject
-	private MedicoService mservice;
-	
-	@Inject
+	final static Logger logger = Logger.getLogger(ConsultaController.class);
+		
+	private IConsultaService cservice;		
+	private MedicoService mservice;	
 	private IPacienteService pservice;
 	
-	private BeanFlash flash = new BeanFlash();
-	
-	private List<SelectItem> medicos;
-	private List<SelectItem> pacientes;
-	
 	@Inject
-	private Medico smedico;
-	
+	private Consulta consulta, filtro;		
 	@Inject
-	private Paciente paciente;
-	
-	private Date dataAtual = new Date();
-	
+	private Medico smedico;	
+	@Inject
+	private Paciente paciente;		
+		
+	private BeanFlash flash;
+	private List<SelectItem> medicos, pacientes;
+	private List<Consulta> consultas;	
+	private Consulta consultaEditar;	
+	private Date dataInicio, dataFim, data, mes;
+	private Boolean isPeriodo, isAgendamento, isPacient, isMes;
+	private ConsultaDto consultaDto;
+	private Map<String, String> comandos;
+	private int comando;
+		
 	@Inject
 	public ConsultaController() throws Exception	{	
 		this.mservice = new MedicoService();
 		this.pservice = new PacienteService();
-	    fillSelectItems();
-	    selectItemsPacientes();
+		this.cservice = new ConsultaService();
+		this.flash = new BeanFlash();			
+		this.consultas = new ArrayList<>();		
+	    this.selectItemsMedicos();
+	    this.selectItemsPacientes();
+	    this.listaConsultas();
+	    this.consultaDto = new ConsultaDto();	
 	}	
-
-    private void fillSelectItems() {
+	
+	public void preparaConsulta(int comando) {	
+		this.comando = comando;
+		switch (comando) {
+		case 1:{
+			this.isPeriodo = true;
+			this.isAgendamento = false;
+			this.isPacient = false;
+			this.isMes = false;
+		}break;
+		case 2:{
+			this.isPeriodo = false;
+			this.isAgendamento = true;
+			this.isPacient = false;
+			this.isMes = false;
+		}break;
+		case 3:{
+			this.isPeriodo = false;
+			this.isAgendamento = false;
+			this.isPacient = false;
+			this.isMes = true;
+		}break;
+		case 4:{
+			this.isPeriodo = false;
+			this.isAgendamento = false;
+			this.isPacient = true;
+			this.isMes = false;
+		}break;
+		default:{
+			this.isPeriodo = false;
+			this.isAgendamento = false;
+			this.isPacient = false;
+			this.isMes = false;
+		}break;
+		}
+		
+	}
+	
+	public String consultarConsultas() {
+		switch (this.comando) {
+			case 1:{
+				this.consultas = this.cservice.buscarPorPeriodo(this.consultaDto.getInicio(), this.consultaDto.getFim());
+				if(this.consultas != null && this.consultas.size() != 0) {
+					return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
+				} else {
+					return this.flash.redirectionAlerta("Não foram encontrandos resultados para sua pesquisa!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				}				
+			}
+			case 2:{			
+				boolean isConsulta = this.cservice.podeFazerAgendamento(this.consultaDto.getData(), this.consultaDto.getMedico().getId());
+				if(isConsulta) {
+					return this.flash.redirectionAlerta("Existe Consulta nesta data para este médico!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				} else {
+					return this.flash.redirectionAlerta("Não Existe Consulta nesta data para este médico!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				}	
+			}
+			case 3:{
+				Calendar calendario = Calendar.getInstance();
+				calendario.setTime(this.consultaDto.getMes());			
+				int mes = calendario.get(Calendar.MONTH);
+				
+				this.consultas = this.cservice.buscaConsultasNoMes(mes);
+				if(this.consultas != null && this.consultas.size() != 0) {
+					return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
+				} else {
+					return this.flash.redirectionAlerta("Não foram encontrandos resultados para sua pesquisa!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				}	
+			}
+			case 4:{
+				this.consultas = this.cservice.buscaConsultasPorPaciente(this.consultaDto.getPaciente().getId());
+				if(this.consultas != null && this.consultas.size() != 0) {
+					return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
+				} else {
+					return this.flash.redirectionAlerta("Não foram encontrandos resultados para sua pesquisa!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				}	
+			}
+			default:{
+				this.paciente = this.cservice.maisCancelouConsulta();
+				this.flash.exibirPaciente();
+				return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
+			}
+		}
+		
+    }	
+	
+    private void selectItemsMedicos() {
         this.medicos = new ArrayList<SelectItem>();
         for (Medico foo : this.mservice.listaMedico()) {
             this.medicos.add(new SelectItem(foo, foo.getNome()));
@@ -81,7 +173,7 @@ public class ConsultaController {
 	
 	public String excluir() throws Exception {
 		this.consulta = this.consultaEditar;
-		this.service.remover(this.consulta.getId());		
+		this.cservice.remover(this.consulta.getId());		
 		return this.flash.redirectionAviso("Cadastrado com Sucesso!", "/pages/consultas/consultas.xhtml?faces-redirect=true");		
 	}
 	
@@ -90,19 +182,25 @@ public class ConsultaController {
 		return "/pages/consultas/addConsultas.xhtml?faces-redirect=true";
 	}
 	
-	public String addConsulta() throws Exception {		
+	public String addConsulta() throws Exception {																																																																													
 		this.consulta.setMedico(this.smedico);
 		this.consulta.setPaciente(this.paciente);
-		if(this.service.podeFazerAgendamento(this.consulta)) {
-			this.service.salvar(this.consulta);							
+		if(this.cservice.podeFazerAgendamento(this.consulta.getDataConsulta(), this.consulta.getMedico().getId())) {																																												
+			this.cservice.salvar(this.consulta);							
 			return this.flash.redirectionAviso("Cadastrado com Sucesso!", "/pages/consultas/consultas.xhtml?faces-redirect=true");	
 		} else {	
 			return this.flash.redirectionAlerta("Já existe uma Consulta para essa data", "/pages/consultas/addConsultas.xhtml?faces-redirect=true");			
 		}			
 	}
 	
+	public String cancelarConsulta() {
+		this.cservice.cancelarConsulta(this.consulta);			
+		return this.flash.redirectionAviso("Cancelada com Sucesso!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+	}
+	
 	public Collection<Consulta> listaConsultas() throws Exception{
-		return this.service.listar();		
+		this.consultas = (List<Consulta>) this.cservice.listar();	
+		return this.consultas;		
 	}
 
 }

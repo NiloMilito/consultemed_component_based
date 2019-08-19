@@ -29,11 +29,10 @@
 							<div class="ui-g-3">
 								<span class="ui-float-label"> 
 									<p:outputLabel for="paciente" value="Paciente: " />	
-
 									<p:selectOneMenu id="paciente" value="#{consultaController.paciente}" converter="pacienteConverter">
 										<f:selectItem itemLabel="Selecione um paciente" itemValue="" />
 										<f:selectItems value="#{consultaController.pacientes}" />
-								</p:selectOneMenu>
+									</p:selectOneMenu>
 									<h:message for="paciente" />
 								</span>	
 							</div>		
