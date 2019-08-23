@@ -104,6 +104,7 @@ public class ConsultaDao implements IConsultaDao{
 
 	@Override
 	public boolean podeFazerAgendamento(Date data, Long id) {
+		this.manager = factory.createEntityManager();
 		String sql = "SELECT case when (count (c) > 0) then true else false end FROM Consulta c WHERE c.medico.id = :id AND c.dataConsulta = :data";					
 		TypedQuery<Boolean> query = this.manager.createQuery(sql, Boolean.class);	
 		query.setParameter("id", id);

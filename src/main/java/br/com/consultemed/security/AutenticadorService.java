@@ -18,7 +18,7 @@ public class AutenticadorService implements Autenticador, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
-	private AutenticadorRepository autenticadorRepository;
+	private AutenticadorRepository autenticadorRepository = new AutenticadorRepository();
 	
 	public Usuario autenticador(String login, String senha) {
 		return this.autenticadorRepository.autenticador(login, senha);

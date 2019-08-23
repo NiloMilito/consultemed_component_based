@@ -27,14 +27,19 @@ public class LoginController implements Serializable {
 	@Setter
 	@Inject
 	private UsuarioLogado usuarioLogado;
+		
 	
-	public String  loginUsuario() {
+	public LoginController() {
+		this.usuarioLogado = new UsuarioLogado();
+	}
+
+	public String  loginUsuario() {		
 		this.usuarioLogado.logar();
 		return "home?faces-redirect=true";
 	}
 	
 	public String logout() {
-		this.usuarioLogado.logout();
+		this.usuarioLogado.logout();		
 		return "/login?faces-redirect=true";
 	}
 	

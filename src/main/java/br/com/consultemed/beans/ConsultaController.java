@@ -1,18 +1,23 @@
 package br.com.consultemed.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import br.com.consultemed.dto.ConsultaDto;
 import br.com.consultemed.models.Consulta;
@@ -26,12 +31,14 @@ import br.com.consultemed.services.PacienteService;
 import lombok.Getter;
 import lombok.Setter;
 
-@Named
+@ManagedBean
 @Getter
 @Setter
-@RequestScoped
-public class ConsultaController {
+@ViewScoped
+public class ConsultaController implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	final static Logger logger = Logger.getLogger(ConsultaController.class);
 		
 	private IConsultaService cservice;		
@@ -52,7 +59,7 @@ public class ConsultaController {
 	private Date dataInicio, dataFim, data, mes;
 	private Boolean isPeriodo, isAgendamento, isPacient, isMes;
 	private ConsultaDto consultaDto;
-	private Map<String, String> comandos;
+	private Map<String, Integer> comandos;
 	private int comando;
 		
 	@Inject
@@ -65,12 +72,21 @@ public class ConsultaController {
 	    this.selectItemsMedicos();
 	    this.selectItemsPacientes();
 	    this.listaConsultas();
-	    this.consultaDto = new ConsultaDto();	
-	}	
+	    this.consultaDto = new ConsultaDto();		    	    
+	}
+	
+	  public void preparaCombo() {
+		  comandos  = new HashMap<String, Integer>();
+		  comandos.put("Buscar Por Periodo", 1);
+		  comandos.put("Verifica se possui agendamento", 2);
+		  comandos.put("Consultas em um Mês", 3);
+		  comandos.put("Consultas de um paciente",4);
+		  comandos.put("Paciente que mais cancelou consultas", 5);
+	  }
 	
 	public void preparaConsulta(int comando) {	
 		this.comando = comando;
-		switch (comando) {
+		switch (this.comando) {
 		case 1:{
 			this.isPeriodo = true;
 			this.isAgendamento = false;
@@ -86,68 +102,65 @@ public class ConsultaController {
 		case 3:{
 			this.isPeriodo = false;
 			this.isAgendamento = false;
-			this.isPacient = false;
 			this.isMes = true;
+			this.isPacient = false;			
 		}break;
 		case 4:{
 			this.isPeriodo = false;
 			this.isAgendamento = false;
-			this.isPacient = true;
 			this.isMes = false;
+			this.isPacient = true;					
 		}break;
 		default:{
-			this.isPeriodo = false;
-			this.isAgendamento = false;
-			this.isPacient = false;
-			this.isMes = false;
+			this.consultarConsultas();
 		}break;
 		}
 		
 	}
 	
-	public String consultarConsultas() {
+	public void consultarConsultas() {
 		switch (this.comando) {
 			case 1:{
 				this.consultas = this.cservice.buscarPorPeriodo(this.consultaDto.getInicio(), this.consultaDto.getFim());
-				if(this.consultas != null && this.consultas.size() != 0) {
-					return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
-				} else {
-					return this.flash.redirectionAlerta("Não foram encontrandos resultados para sua pesquisa!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				if(this.consultas == null || this.consultas.size() == 0) {	
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta","Não foram encontrandos resultados para sua pesquisa!");		         
+				    PrimeFaces.current().dialog().showMessageDynamic(message);										
 				}				
-			}
+			}break;
 			case 2:{			
 				boolean isConsulta = this.cservice.podeFazerAgendamento(this.consultaDto.getData(), this.consultaDto.getMedico().getId());
-				if(isConsulta) {
-					return this.flash.redirectionAlerta("Existe Consulta nesta data para este médico!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				if(!isConsulta) {
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Informação","Não Existe Consulta para essa Data com esse Médico!");		         
+				    PrimeFaces.current().dialog().showMessageDynamic(message);					
 				} else {
-					return this.flash.redirectionAlerta("Não Existe Consulta nesta data para este médico!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta","Existe Consulta para essa Data com esse Médico!");		         
+				    PrimeFaces.current().dialog().showMessageDynamic(message);										
 				}	
-			}
+			}break;
 			case 3:{
 				Calendar calendario = Calendar.getInstance();
 				calendario.setTime(this.consultaDto.getMes());			
-				int mes = calendario.get(Calendar.MONTH);
+				int mes = calendario.get(Calendar.MONTH) + 1;
 				
 				this.consultas = this.cservice.buscaConsultasNoMes(mes);
-				if(this.consultas != null && this.consultas.size() != 0) {
-					return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
-				} else {
-					return this.flash.redirectionAlerta("Não foram encontrandos resultados para sua pesquisa!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				if(this.consultas == null || this.consultas.size() == 0) {		
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta","Não foram encontrandos resultados para sua pesquisa!");		         
+				    PrimeFaces.current().dialog().showMessageDynamic(message);
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Não foram encontrandos resultados para sua pesquisa!", "Warning!"));					
 				}	
-			}
+			}break;
 			case 4:{
 				this.consultas = this.cservice.buscaConsultasPorPaciente(this.consultaDto.getPaciente().getId());
-				if(this.consultas != null && this.consultas.size() != 0) {
-					return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
-				} else {
-					return this.flash.redirectionAlerta("Não foram encontrandos resultados para sua pesquisa!", "/pages/consultas/consultas.xhtml?faces-redirect=true");
+				if(this.consultas == null || this.consultas.size() == 0) {	
+					FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta","Não foram encontrandos resultados para sua pesquisa!");		         
+				    PrimeFaces.current().dialog().showMessageDynamic(message);									
 				}	
-			}
+			}break;
 			default:{
-				this.paciente = this.cservice.maisCancelouConsulta();
-				this.flash.exibirPaciente();
-				return ("/pages/consultas/consultas.xhtml?faces-redirect=true");
-			}
+				this.paciente = this.cservice.maisCancelouConsulta();	
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Paciente","Nome: "+this.paciente.getNome());		         
+			    PrimeFaces.current().dialog().showMessageDynamic(message);			  			
+			}break;
 		}
 		
     }	

@@ -26,7 +26,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BeanFlash {
+	
 
+	public BeanFlash() {
+	}
+	
 	public String redirection() {		
 		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Realizado com sucesso"));
 		FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
@@ -60,6 +64,6 @@ public class BeanFlash {
 	    
         FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 	}
-	
+
 		
 }

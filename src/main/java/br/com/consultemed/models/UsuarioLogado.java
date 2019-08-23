@@ -5,11 +5,14 @@ package br.com.consultemed.models;
 
 import java.io.Serializable;
 
-import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpSession;
+
+import org.primefaces.PrimeFaces;
 
 import br.com.consultemed.security.AutenticadorService;
 import lombok.Getter;
@@ -19,31 +22,44 @@ import lombok.Setter;
  * @author carlosbarbosagomesfilho
  *
  */
-@Named
-@SessionScoped
+@ManagedBean
+@ViewScoped
 @Getter
 @Setter
 public class UsuarioLogado implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Inject
 	private Usuario usuario;
+	private AutenticadorService autenticador;
 	
 	@Inject
-	private AutenticadorService autenticador;
+	public UsuarioLogado() {
+		this.usuario = new Usuario();
+		this.autenticador = new AutenticadorService();
+	}	
 
-	public void logar() {
-		
+	public String logar() {	
+		String pagRetorno = "/login.xhtml";
+	    
 		Usuario usuario = this.autenticador.autenticador(this.usuario.getLogin(), this.usuario.getSenha());
-		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-		session.setAttribute("usuario", usuario);
+		    
+	    if(usuario == null){
+	    	FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta","Login ou senha inválidos!");		         
+		    PrimeFaces.current().dialog().showMessageDynamic(message);	
+		    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Login ou senha inválidos!", "Warn!"));
+		    return pagRetorno;	    
+	    }else{
+	    	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+			session.setAttribute("usuario", usuario.getNome());
+            pagRetorno = "/home.xhtml";
+        }        
+        return pagRetorno;		
 	}
 
 	public void logout() {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
-		session.invalidate();
-		
+		session.invalidate();	
 	}
 	
 	
@@ -57,6 +73,6 @@ public class UsuarioLogado implements Serializable {
 		}
 		return isLogeded;
 	}
-	
+
 
 }
