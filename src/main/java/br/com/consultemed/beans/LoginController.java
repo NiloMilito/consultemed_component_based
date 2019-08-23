@@ -9,7 +9,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import br.com.consultemed.models.UsuarioLogado;
 import lombok.Getter;
 import lombok.Setter;
 

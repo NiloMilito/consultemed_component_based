@@ -1,7 +1,7 @@
 /**
  * 
  */
-package br.com.consultemed.models;
+package br.com.consultemed.beans;
 
 import java.io.Serializable;
 
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.primefaces.PrimeFaces;
 
+import br.com.consultemed.models.Usuario;
 import br.com.consultemed.security.AutenticadorService;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,8 +61,7 @@ public class UsuarioLogado implements Serializable {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
 		session.invalidate();	
-	}
-	
+	}	
 	
 	public boolean isLogado() {
 		boolean isLogeded = false;
@@ -73,6 +73,8 @@ public class UsuarioLogado implements Serializable {
 		}
 		return isLogeded;
 	}
+	
+	
 
 
 }

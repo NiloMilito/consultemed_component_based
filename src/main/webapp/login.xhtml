@@ -1,36 +1,30 @@
+<!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
-	template="/WEB-INF/templates/LayoutLogin.xhtml">
-	
+	template="/WEB-INF/templates/LayoutMenu.xhtml">
 	<ui:define name="content">
-	<h1 class="aw-page-title">ConsulteMed</h1>
 
-	
-		<h:form id="frm" style="align:center">
-			<p:messages showDetail="false" showSummary="true" globalOnly="true" />
-			<div class="ui-g-12">	
-				<p:panel id="login" header="Acesso ao Sistema" style="margin-bottom:20px">
-					<p:panelGrid columns="5" >
-						<span class="ui-float-label"> 
-							<p:outputLabel for="nomeUsuario" value="Login Usuário:" />
-							<p:inputText id="nomeUsuario" value="#{loginController.usuarioLogado.usuario.login}" />
-						</span>
-						<p:message for="nomeUsuario" />
-						<span class="ui-float-label"> 
-							<p:outputLabel for="senha" value="Senha:" />
-							<p:password id="senha" value="#{loginController.usuarioLogado.usuario.senha}" />
-						</span>
-						<p:message for="senha" />
-					</p:panelGrid>
+	<h:form id="frm">
+		<p:messages showDetail="false" showSummary="true" globalOnly="true" />
+		<div class="ui-g-12">	
+			<p:panel id="login" header="Acesso ao Sistema" style="margin-bottom:20px">
+				<p:panelGrid columns="7">			
+					<p:outputLabel for="nomeUsuario" value="Login Usuário:" />
+					<p:inputText id="nomeUsuario" value="#{loginController.usuarioLogado.usuario.login}" />					
+					<p:message for="nomeUsuario" />
 					
+					<p:outputLabel for="senha" value="Senha:" />
+					<p:password id="senha" value="#{loginController.usuarioLogado.usuario.senha}" />				
+					<p:message for="senha" />
 					<p:commandButton value="Enviar" action="#{loginController.loginUsuario()}" ajax="false"/>
-		   		</p:panel>
-			</div>
-		</h:form>
-
-	</ui:define>	
+				</p:panelGrid>								
+			   </p:panel>
+		</div>
+	</h:form>
+  </ui:define>
 </ui:composition>
+	
 

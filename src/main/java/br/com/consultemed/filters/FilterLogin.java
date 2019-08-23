@@ -16,23 +16,23 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet Filter implementation class FilterLoggin
  */
-@WebFilter(filterName = "/filterLoggin", urlPatterns = {"/*"})
+@WebFilter(filterName = "/filterLoggin", urlPatterns = {"/pages/*"})
 public class FilterLogin implements Filter {
 	
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 		throws IOException, ServletException {	
 		  HttpServletRequest req = (HttpServletRequest) request;
-	      HttpSession session = req.getSession();
-	      HttpServletResponse res = (HttpServletResponse) response;
-	      String nome = (String) session.getAttribute("usuario");
-	      if(!session.isNew()){
-	            if(nome != null || req.getRequestURI().endsWith("login.xhtml")){
-	                chain.doFilter(request, response);
-	            }else{            
-	            	res.sendRedirect("login.xhtml");
-	            }
-	      }else
-	             res.sendRedirect("login.xhtml");
+		   HttpSession session = req.getSession();
+		   HttpServletResponse res = (HttpServletResponse) response;
+		   String nome = (String) session.getAttribute("usuario");
+		   if(!session.isNew()){
+		        if(nome != null || req.getRequestURI().endsWith("login.xhtml")){
+		             chain.doFilter(request, response);
+		        }else{            
+		        	res.sendRedirect("login.xhtml");
+		       }
+		  }else
+		      res.sendRedirect("login.xhtml");
 	}
 
 	@Override
@@ -42,4 +42,5 @@ public class FilterLogin implements Filter {
 	@Override
 	public void destroy() {		
 	}
+	
 }
