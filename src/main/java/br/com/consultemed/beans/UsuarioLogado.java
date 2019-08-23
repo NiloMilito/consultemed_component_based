@@ -46,8 +46,7 @@ public class UsuarioLogado implements Serializable {
 		    
 	    if(usuario == null){
 	    	FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Alerta","Login ou senha inválidos!");		         
-		    PrimeFaces.current().dialog().showMessageDynamic(message);	
-		    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Login ou senha inválidos!", "Warn!"));
+		    PrimeFaces.current().dialog().showMessageDynamic(message);			   
 		    return pagRetorno;	    
 	    }else{
 	    	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);

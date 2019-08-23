@@ -32,9 +32,8 @@ public class LoginController implements Serializable {
 		this.usuarioLogado = new UsuarioLogado();
 	}
 
-	public String  loginUsuario() {		
-		this.usuarioLogado.logar();
-		return "home?faces-redirect=true";
+	public String loginUsuario() {		
+		return this.usuarioLogado.logar();
 	}
 	
 	public String logout() {
