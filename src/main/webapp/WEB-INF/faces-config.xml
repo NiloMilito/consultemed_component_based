@@ -10,20 +10,8 @@
 		</locale-config>
 	</application>
 
-<!-- 	<lifecycle> -->
-<!-- 		<phase-listener>br.com.consultemed.phaselistener.LoginPhaseListener</phase-listener> -->
-<!-- 	</lifecycle> -->
-	<!-- <converter>
-	  <description>Configurando converter</description>
-	  <converter-for-class>br.com.consultemed.models.Medico</converter-for-class>
-	  <converter-class>br.com.consultemed.converter.PacienteConverter</converter-class>
-	</converter>
-	
-	<converter>
-	  <description>Configurando converter</description>
-	  <converter-for-class>br.com.consultemed.models.Paciente</converter-for-class>
-	  <converter-class>br.com.consultemed.converter.MedicoConverter</converter-class>
-	</converter> -->
-
+	<lifecycle> 
+		<phase-listener>br.com.consultemed.phaselistener.LoginPhaseListener</phase-listener> 
+ 	</lifecycle> 
 
 </faces-config>

@@ -3,32 +3,53 @@ package br.com.consultemed.beans;
 import java.util.Collection;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
+import br.com.consultemed.models.Endereco;
 import br.com.consultemed.models.Paciente;
 import br.com.consultemed.services.PacienteService;
+import br.com.consultemed.webServices.EnderecoJSON;
+import br.com.consultemed.webServices.EnderecoWebService;
 import lombok.Getter;
 import lombok.Setter;
 
-@Named
-@RequestScoped
+@ManagedBean
+@ViewScoped
 @Getter
 @Setter
 public class PacienteController {
 
-	private List<Paciente> pacientes;
-
 	@Inject
 	private Paciente paciente;
-	
-	private Paciente pacienteEditar;
-	
 	@Inject
 	private PacienteService service;
+	@Inject
+	private EnderecoWebService webService;
 	
+	private Paciente pacienteEditar;
+	private List<Paciente> pacientes;	
 	private BeanFlash flash = new BeanFlash();
+	private String cep;
+	
+	@Inject
+	public PacienteController() {
+		this.paciente = new Paciente();
+		this.service = new PacienteService();
+		this.webService = new  EnderecoWebService();
+	}
+
+	public void buscaCep() {
+		Endereco endereco = ParseEntyToJSON(this.webService.getBuscaCEP(this.cep));	
+		this.paciente.setEndereco(endereco);
+	}
+
+	private Endereco ParseEntyToJSON(EnderecoJSON enderecoJSON) {
+		Endereco endereco = new Endereco(
+			enderecoJSON.getLogradouro(), enderecoJSON.getBairro(), enderecoJSON.getCidade(), enderecoJSON.getUf());		
+		return endereco;
+	}
 	
 	public String editar() {
 		this.paciente = this.pacienteEditar;

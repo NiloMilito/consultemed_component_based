@@ -25,7 +25,7 @@
 	<header class="aw-topbar">		
 		<a href="#" class="aw-toggle js-toggle"><i class="fa  fa-bars"></i></a>
 		<h:form>
-			<span style="text-align: right;">Bem vindo, Sr.#{usuarioLogado.usuario.login}</span>
+			<span style="text-align: right;">Bem vindo, Sr.#{usuarioLogado.getLogado()}</span>
 			<h:commandLink action="#{loginController.logout()}" value="Sair" />
 		</h:form>
 		<span>Consulte<i>Med</i></span>

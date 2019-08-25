@@ -5,9 +5,10 @@ package br.com.consultemed.beans;
 
 import java.io.Serializable;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -24,11 +25,11 @@ import lombok.Setter;
  *
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 @Getter
 @Setter
 public class UsuarioLogado implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;	
 
 	private Usuario usuario;
 	private AutenticadorService autenticador;
@@ -38,6 +39,11 @@ public class UsuarioLogado implements Serializable {
 		this.usuario = new Usuario();
 		this.autenticador = new AutenticadorService();
 	}	
+	
+	public String getLogado() {
+		String nome = (String) getSession().getAttribute("usuario");
+		return nome;
+	}
 
 	public String logar() {	
 		String pagRetorno = "/login.xhtml";
@@ -73,6 +79,12 @@ public class UsuarioLogado implements Serializable {
 		return isLogeded;
 	}
 	
+	  public HttpSession getSession(){
+	      FacesContext fc = FacesContext.getCurrentInstance();
+	      ExternalContext ec = fc.getExternalContext();
+	      HttpSession session = (HttpSession) ec.getSession(false);
+	      return session;
+	  }
 	
 
 

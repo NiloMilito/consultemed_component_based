@@ -11,6 +11,15 @@ import lombok.Setter;
 @Setter
 public class Endereco{	
 	
+	public Endereco(String rua, String bairro, String cidade, String estado) {
+		this.rua = rua;
+		this.bairro = bairro;
+		this.cidade = cidade;
+		this.estado = estado;
+	}
+	
+	public Endereco() {}
+
 	@Column(name="cep")
 	private String cep;
 	

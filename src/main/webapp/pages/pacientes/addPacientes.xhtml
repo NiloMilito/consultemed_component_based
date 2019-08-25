@@ -39,6 +39,13 @@
 				<span class="ui-float-label"> 		
 					<p:inputMask id="cpf" value="#{pacienteController.paciente.cpf}" mask="999.999.999-99" />
 				</span>
+
+				<h3>CEP do Paciente</h3>
+				<span class="ui-float-label"> 
+					<p:inputMask id="cep" value="#{pacienteController.cep}" mask="99999999" required="true">
+						<p:ajax event="blur" listener="#{pacienteController.buscaCep}" update="cadastroPacientes" />	
+					</p:inputMask>
+				</span>
 										
 				<h3>Rua do Paciente</h3>
 				<span class="ui-float-label"> 
